@@ -14,7 +14,7 @@ class LaterOfficeTable extends Migration
     public function up()
     {
         Schema::table('offices', function (Blueprint $table) {
-            $table->boolean('feed_global')->default(false)->after('phone_number');
+//            $table->boolean('feed_global')->default(false)->after('phone_number');
         });
     }
 
