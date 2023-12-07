@@ -1,0 +1,201 @@
+// Mixing to make breakpoints a little easier. Can be expanded with any breakpoints as needed.
+@mixin breakpoint($point) {
+  @media (min-width: 66rem) {
+    @content;
+  }
+}
+
+// Namespace so that it's easy to use your own table namespace
+$namespace: "responsive-table";
+$table-wrapped-header: 120px;
+//$table-cell-padding: 6px;
+$color-table: #f0f3f5;
+$color-table-body: #fafaf9;
+
+.#{$namespace} {
+  transition: 0.5s;
+  padding-bottom: 0;
+  width: 100%;
+  // todo: turn this back on dave likes it
+  //box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  //border: 2px solid darken($color-table-body, 70%);
+  font-family: 'Dosis', sans-serif;
+  border-collapse: separate;
+  border-spacing: 0;
+
+
+  //@include breakpoint(medium) {
+  //  max-width: 900px;
+  //}
+
+  &__head {
+    display: none;
+    visibility: hidden;
+
+    // Desktop
+    @include breakpoint(medium) {
+      width: 100%;
+      display: table-header-group;
+      visibility: visible;
+      color: white;
+    }
+  }
+
+  &__body,
+  &__row,
+  &__cell {
+    display: block;
+    border: 0;
+    padding: 0;
+    text-align: left;
+    white-space: normal;
+
+    // table cells in the table main header row
+    .responsive-table__head & {
+
+      // desktop
+      @include breakpoint(medium) {
+        //padding: 20px;
+        //text-shadow: 0 1px 0 darken($color-table, 90%);
+        text-align: center;
+        font-size: 1.35rem;
+        color: black;
+        background: $color-table;
+        box-shadow: inset 0px 1px 2px lighten($color-table, 20%);
+        border: 1px solid darken($color-table, 20%);
+      }
+    }
+  }
+
+  &__row {
+    margin-bottom: 10px;
+
+    // Desktop
+    @include breakpoint(medium) {
+      display: table-row;
+      width: 100%;
+
+      .#{$namespace}__cell {
+        display: table-cell;
+      }
+    }
+
+    background-color: darken($color-table-body, 5%);
+
+    &:nth-child(even) {
+      background-color: $color-table-body;
+    }
+  }
+
+  &__cell {
+    padding: $table-cell-padding;
+    transition: 1s;
+
+    // All cells that belong to the table body
+    .#{$namespace}__body & {
+      text-align: left;
+      //padding: 16px;
+      border: 1px solid darken($color-table-body, 15%);
+      box-shadow: inset 0px 1px 2px lighten($color-table-body, 20%);
+    }
+  }
+
+  &__body {
+    display: table-row-group;
+  }
+
+  &__cell[data-title]:before {
+    display: inline-block;
+    min-width: $table-wrapped-header;
+    content: attr(data-title) ":";
+    font-weight: bold;
+
+    // Desktop
+    @include breakpoint(medium) {
+      display: none;
+      content: "";
+    }
+  }
+
+  &__cell:empty {
+    display: none;
+
+    // Desktop
+    @include breakpoint(medium) {
+      display: table-cell;
+    }
+  }
+
+  &__cell--head {
+
+    // Desktop
+    @include breakpoint(medium) {
+
+      &[data-title]:before {
+        display: none;
+        content: "";
+      }
+    }
+
+  }
+
+  &__cell--spanned {
+    //@include breakpoint(medium) {
+    font-size: 1.2rem;
+    font-weight: bold;
+    //}
+  }
+
+}
+
+table th {
+  text-align: center;
+}
+
+.table__cell {
+  text-align: center;
+}
+
+.table th, .table td {
+  text-align: center;
+}
+
+.triangle {
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 9px solid black;
+  margin-left: 2px;
+}
+
+.flip {
+  transform: rotate(180deg);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* top-left border-radius */
+table tr:first-child th:first-child {
+  border-top-left-radius: 7px;
+}
+
+/* top-right border-radius */
+table tr:first-child th:last-child {
+  border-top-right-radius: 7px;
+}
+
+/* bottom-left border-radius */
+table tr:last-child td:first-child {
+  border-bottom-left-radius: 7px;
+}
+
+/* bottom-right border-radius */
+table tr:last-child td:last-child {
+  border-bottom-right-radius: 7px;
+}

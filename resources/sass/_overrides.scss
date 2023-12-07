@@ -1,0 +1,65 @@
+
+// Color codes
+$theme-colors: (
+    "primary": #00B7FF,
+    "secondary": #62fffc,
+    "third" : #6275e8,
+    "success": #78E50E,
+    "danger": #ff5f5d,
+    "warning": #FBD833,
+    "info": #04b15e,
+);
+
+// Bootstrap overrides
+$border-radius:               1rem;
+$border-radius-lg:            2rem;
+$border-radius-sm:            .5rem;
+$input-border-radius:         .5rem;
+
+$select-green: #1FA4B8;
+$select-yellow: #FBD833;
+$select-red: #f86c6b;
+
+// Sidebar
+$sidebar-color:                       black;
+$sidebar-bg:                          #45d1fb;
+$sidebar-nav-link-color:              black;
+$sidebar-nav-link-icon-color:         black;
+$sidebar-nav-link-hover-color:        #fff !default;
+$sidebar-nav-link-active-color:       #fff !default;
+$sidebar-nav-link-active-bg:          lighten($sidebar-bg, 5%) !default;
+$sidebar-nav-link-active-icon-color: #FCFDC7;
+$sidebar-nav-dropdown-bg:             rgba(69, 209, 251,.7);
+
+//$navbar-color:                        #45d1fb;
+$sidebar-nav-color: rgba(22, 22, 22, 0.98);
+$sidebar-nav-title-color: black;
+
+//Maz Disabled color
+
+
+
+.btn-third {
+    color: white;
+    background-color: map-get($theme-colors, third);
+    border-color: map-get($theme-colors, third);
+}
+
+
+.fancy-body-card {
+    background: #B2FEFA; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to top, #0ED2F7, #B2FEFA); /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to top, rgba(14, 210, 247, .25), rgba(178, 254, 250, .25)); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.blue-call-button {
+    padding: 20px !important;
+    background-color: rgb(29, 0, 255) !important;
+    border-color: rgb(29, 0, 255) !important;
+}
+
+.green-call-button {
+    padding: 20px !important;
+    background-color: rgb(85, 162, 32) !important;
+    border-color: rgb(85, 162, 32) !important;
+}

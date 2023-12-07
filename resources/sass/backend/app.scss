@@ -1,0 +1,130 @@
+@import "../global";
+
+// Import styles
+@import "~@coreui/coreui/scss/coreui";
+
+
+
+// Fix mobile footer
+.app-footer {
+    flex: 0 0;
+    padding-top: map-get($spacers, 3);
+    padding-bottom: map-get($spacers, 3);
+}
+
+hr {
+    border: 0;
+    margin: 1.35em auto;
+    max-width: 100%;
+    background-position: 50%;
+    box-sizing: border-box;
+}
+
+.horline {
+    height: 1px;
+    $color: #e4e5e6;
+    color: $color;
+    background-image: linear-gradient(
+                    90deg,
+                    rgba($color, 0),
+                    rgba($color, 1) 50%,
+                    rgba($color, 0) 100%);
+}
+
+.select-green {
+    background-color: $select-green !important;
+}
+.select-yellow {
+    background-color: $select-yellow !important;
+}
+.select-red {
+    background-color: $select-red !important;
+}
+.announcements-header {
+    overflow: hidden;
+    white-space: nowrap;
+    display: block;
+    float: left;
+    width: 80%;
+}
+
+// TODO: this was a fancy gradient drop shadow on divs maybe fix maybe not
+@import "fancyShadow";
+@import "responsiveTable";
+@import "VendorLinksStyle";
+//@import "~summernote/dist/summernote-bs4.css";
+
+.note-insert {
+    display: none;
+}
+
+
+
+
+//.sidebar {
+//    background-image: -webkit-linear-gradient(45deg, #00a8c5, #ffff7e);
+//    background-image: linear-gradient(45deg, #00a8c5, #ffff7e);
+//}
+
+.sidebar {
+    background-image: -webkit-linear-gradient(45deg, #00b7ff, #ffffc7);
+    background-image: linear-gradient(45deg, #00b7ff, #ffffc7);
+}
+
+.sidebar .sidebar-minimizer::before {
+    filter: invert(40%) sepia(73%) saturate(1410%) hue-rotate(851deg) brightness(100%) contrast(230%);
+}
+
+.delete-button {
+    border-top-right-radius: 2rem;
+    border-bottom-right-radius: 2rem;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+.badge-notify {
+    float: left;
+    display: block;
+}
+
+.trash-btn {
+    padding: 3px 15px 4px 15px;
+    border-radius: 9px;
+}
+
+
+//Vue CHeckbox-toggle
+
+.checkbox-toggle {
+    width: 12em;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 0.5em;
+}
+.checkbox-slide.unchecked {
+    transition: all 350ms;
+    background: lightgray;
+}
+.checkbox-slide {
+    width: 4em;
+    padding: 0;
+    margin: 0;
+    border-radius: 0.25em;
+    cursor: pointer;
+}
+
+.checkbox-switch.unchecked {
+    transition: all 350ms;
+}
+
+.checkbox-switch {
+    padding: 0;
+    margin: 0;
+    width: 2em;
+    height: 2em;
+    border-radius: 0.25em;
+    background: #384a5d;
+    cursor: pointer;
+}
