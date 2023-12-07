@@ -49,10 +49,10 @@ class UserTableSeeder extends Seeder
 //        ]);
         // user id of 3
         User::create([
-            'first_name' => 'Shane',
-            'last_name' => 'Montana',
-            'email' => 'shanem@solcalenergy.com',
-            'password' => 'secret',
+            'first_name' => 'Mick',
+            'last_name' => 'Thomas',
+            'email' => 'mickalanthomas@gmail.com',
+            'password' => 'X@RSALSA',
             'remember_token' => 'executive',
             'api_token' => 'SsWR02SxMlsFe95RRzzw20geXk6tzVuexr6jYSSlWNFftO37EzKygRIdDNVYfiVmbbGM5dtWS7moP1JW',
              'languages' => ['english'],

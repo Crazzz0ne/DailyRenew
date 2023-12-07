@@ -731,9 +731,9 @@ class LeadController extends Controller
 //            }
 //New event JeopardyEvent
 
-            $shane = User::where('email','shane@solarbrightwave.com')->get()->first();
-
-            $this->leadRepository->email($subject, $body, $link, $shane);
+//            $shane = User::where('email','shane@solarbrightwave.com')->get()->first();
+//
+//            $this->leadRepository->email($subject, $body, $link, $shane);
 
             if ($lead->status_id == 14 || $lead->status_id == 20) {
                 event(new JeopardyEvent($lead));
@@ -782,9 +782,9 @@ class LeadController extends Controller
                 }
             }
 
-            $shane = User::where('email', 'shane@solarbrightwave.com')->get()->first();
+//            $shane = User::where('email', 'shane@solarbrightwave.com')->get()->first();
 
-            $this->leadRepository->email($subject, $body, $link, $shane);
+//            $this->leadRepository->email($subject, $body, $link, $shane);
 
         }
         $something = null;
