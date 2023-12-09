@@ -222,7 +222,7 @@ class CustomerController extends Controller
         $lead->siteSurveyQuestions()->save($siteSurveyQuestion);
 
         $proposal = new RequestedSystem();
-        $proposal->epc_finance_id = 395;
+        $proposal->epc_finance_id = 7;
         $proposal->ppw = 4;
         $proposal->offset = 100;
         $proposal->solar_rate = .16;

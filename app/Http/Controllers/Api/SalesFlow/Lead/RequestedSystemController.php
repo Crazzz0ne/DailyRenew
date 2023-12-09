@@ -41,7 +41,7 @@ class RequestedSystemController
 
         $requestedSystem = new RequestedSystem();
         $requestedSystem->lead_id = $lead->id;
-        $requestedSystem->epc_finance_id = 395;
+        $requestedSystem->epc_finance_id = 7;
         $requestedSystem->solar_rate = .16;
         $requestedSystem->offset = 100;
         $requestedSystem->ppw = 4;
