@@ -1,5 +1,5 @@
 <template>
-    <div v-if="$can('view lead')">
+    <div >
         <div
             v-if="!loading && epc"
             class="card"

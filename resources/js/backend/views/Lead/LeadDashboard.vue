@@ -26,7 +26,6 @@
       </div>
 
       <div
-        v-if="$can('view lead')"
         class="col py-4"
       >
         <MazBtn
@@ -38,7 +37,6 @@
     </div>
 
     <div
-      v-if="$can('view lead')"
       class="card"
     >
       <!--{{leads}}-->

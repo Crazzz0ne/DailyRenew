@@ -43,7 +43,7 @@ class NewLeadNoteListener
         $users = $lead->reps->unique();
         $tempArray = [];
         foreach ($users as $user) {
-            if ($user->can('view lead') && $user->terminated == null) {
+            if ($user->terminated == null) {
                 if ($event->lead->close_date !== null){
                     if ($user->hasRole('sp2') || $user->hasRole('manager') || $user->hasRole('account manager')
                         || $user->hasRole('regional manager') || $user->hasRole('roof assessor') || $user->hasRole('sales manager')){
@@ -61,7 +61,7 @@ class NewLeadNoteListener
         if ($lead->close_date) {
             $userArray = [];
             foreach ($users as $user) {
-                if ($user->pivot->position_id === 9 || $user->pivot->position_id === 3 && $user->can('view lead') && $user->terminated == null) {
+                if ($user->pivot->position_id === 9 || $user->pivot->position_id === 3 && $user->terminated == null) {
                     array_push($userArray, $user->id);
                 }
             }
