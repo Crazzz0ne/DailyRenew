@@ -55,7 +55,7 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'no-reply@solcalenergy.com'),
+        'address' => env('MAIL_FROM_ADDRESS', 'no-reply@dailyrenewables.com'),
         'name' => env('MAIL_FROM_NAME', 'Scout'),
     ],
 
@@ -83,9 +83,9 @@ return [
     |
     */
 
-    'username' => env('MAIL_USERNAME', 'postmaster@mail.solcalenergy.com'),
+    'username' => env('MAIL_USERNAME', 'postmaster@mail.dailyrenewables.com'),
 
-    'password' => env('MAIL_PASSWORD', '8d301290225a0952b61feadac939ce3a-8b34de1b-227c1c81'),
+    'password' => env('MAIL_PASSWORD', '0'),
 
     /*
     |--------------------------------------------------------------------------

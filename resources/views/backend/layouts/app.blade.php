@@ -26,7 +26,7 @@
     <title>@yield('title', app_name())</title>
     <meta name="description" content="@yield('meta_description', 'Scout')">
     <meta name="author" content="@yield('meta_author', 'Chris Furman')">
-    <link rel="shortcut icon" href="{{ asset('img/backend/brand/sces.ico') }}"/>
+    <link rel="shortcut icon" href="{{ asset('img/backend/brand/daily.ico') }}"/>
 
     <script>
 

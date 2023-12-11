@@ -112,7 +112,6 @@ class WebhookHandler extends ProcessWebhookJob
                         ->queue(new BaseMailable($subject, $body, $link, 'lead'));
                 }
 
-                $shane = User::where('email', '=', 'shanem@solcalenergy.com')->get()->first();
                 Mail::to($shane->email)
                     ->queue(new BaseMailable($subject, $body, $link, 'lead'));
             } elseif ($payload['status'] === 'JOB_OUT_OF_JIJ') {

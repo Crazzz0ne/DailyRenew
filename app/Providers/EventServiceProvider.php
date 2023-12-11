@@ -118,9 +118,9 @@ class EventServiceProvider extends ServiceProvider
         SlackWebhookNotificationEvent::class => [
             SlackWebhookNotificationListener::class
         ],
-        UpdateZapierEvent::class => [
-            UpdateZapierListener::class
-        ],
+//        UpdateZapierEvent::class => [
+//            UpdateZapierListener::class
+//        ],
 
     ];
 

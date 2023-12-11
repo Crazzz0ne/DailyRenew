@@ -36,7 +36,7 @@
     {{ style(mix('css/backend.css')) }}
 
     @stack('after-styles')
-    @laravelPWA
+
 
 </head>
 
