@@ -12,6 +12,7 @@ class TwilioSMSController extends Controller
     //TODO: Check if this is needed anymore now that notifiable has been implemented and laravel notifications are now being broadcast instead of events.
     public static function sendSms($too, $body, $twilioNumber = '+18557856590')
     {
+        return true;
 
         $to = '+1' . $too;
 

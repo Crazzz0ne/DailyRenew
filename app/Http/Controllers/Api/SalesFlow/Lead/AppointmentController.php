@@ -179,7 +179,6 @@ class AppointmentController extends Controller
         $slotArray = NewAppointmentHelper::setSlots($currentTime, $endTime, $remote);
         $users = NewAppointmentHelper::removeUsersByLanguage($lead->customer, $users);
 
-//return $users;
         $slotCollection = NewAppointmentHelper::checkAvailability($slotArray, $users);
         $slotCollection = NewAppointmentHelper::checkAppointments($slotCollection, $users);
 
