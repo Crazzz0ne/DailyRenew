@@ -16,7 +16,7 @@
                         <!--            />-->
                     </div>
                     <div class="col-sm-12 col-md-3  pt-sm-3 text-center">
-                        <template  v-if="$can('administrate company')">
+                        <template  v-if="false">
                             <MazSelect
                                 placeholder="Status"
                                 :options="compStatusList"
