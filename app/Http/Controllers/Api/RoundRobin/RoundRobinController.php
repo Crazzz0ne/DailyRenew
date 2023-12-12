@@ -29,6 +29,7 @@ class RoundRobinController extends Controller
 
     public function inGoBack(Request $request)
     {
+        return 'yes';
         $apiKey = substr($request->header('Authorization'), -80);
         $user = User::where('api_token', '=', $apiKey)
             ->first();

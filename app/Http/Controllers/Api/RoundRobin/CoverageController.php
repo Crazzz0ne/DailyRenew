@@ -12,63 +12,43 @@ class CoverageController extends Controller
 {
     public function index(Request $request)
     {
-        $leads = Lead::whereHas('office', function ($q) {
-            $q->where('market_id', 14);
-        })->with(['appointments' => function ($q) {
-            $q->where('type_id', 6);
-        },
-            'system', 'customer'])->get();
+        $leads = Lead::whereHas('office', fn($q) => $q->where('market_id', 1))
+            ->with(['appointments' => fn($q) => $q->where('type_id', 6), 'system', 'customer'])
+            ->get();
 
-        $users = User::whereHas('office', function ($q) {
-            $q->where('market_id', 14);
-        })->with(['availability' => function ($q) {
-            $q->where('type', 'call-center')->where('start', '>', Carbon::now());
-        }])->get();
+        $users = User::whereHas('office', fn($q) => $q->where('market_id', 1))
+            ->with(['availability' => fn($q) => $q->where('type', 'call-center')->where('start', '>', Carbon::now())])
+            ->get();
+
+        $cityList = $this->processLeads($leads);
+        $cityList = $this->processUsers($users, $cityList);
+
+        return $cityList;
+    }
+
+    private function processLeads($leads)
+    {
         $cityList = [];
         foreach ($leads as $lead) {
-            if ($lead->appointments->count()) {
-                if (isset($cityList[$lead->customer->city]['appointments'])) {
-                    $cityList[$lead->customer->city]['appointments']++;
-                } else {
-                    $cityList[$lead->customer->city]['appointments'] = 1;
-                }
-            }
+            $city = $lead->customer->city;
+            $cityList[$city]['appointments'] = ($cityList[$city]['appointments'] ?? 0) + $lead->appointments->count();
             if ($lead->system) {
-                if (isset($cityList[$lead->customer->city]['closed'])) {
-                    $cityList[$lead->customer->city]['closed']++;
-                } else {
-                    $cityList[$lead->customer->city]['closed'] = 1;
-                }
-                if (isset($cityList[$lead->customer->city]['kwh'])) {
-                    $cityList[$lead->customer->city]['kwh'] += $lead->system->system_size;
-                } else {
-                    $cityList[$lead->customer->city]['kwh'] = $lead->system->system_size;
-                }
+                $cityList[$city]['closed'] = ($cityList[$city]['closed'] ?? 0) + 1;
+                $cityList[$city]['kwh'] = ($cityList[$city]['kwh'] ?? 0) + $lead->system->system_size;
             }
-
         }
+        return $cityList;
+    }
 
+    private function processUsers($users, $cityList)
+    {
         foreach ($users as $user) {
-
-            $userCities = $user->tagsWithType('EligibleCity');
-            foreach ($userCities as $city) {
-                if (isset($cityList[$city->name]['userCount'])) {
-                    $cityList[$city->name]['userCount']++;
-                } else {
-                    $cityList[$city->name]['userCount'] = 1;
-                }
-                if ($user->availability){
-
-                    if (isset($cityList[$city->name]['availability'])) {
-                        $cityList[$city->name]['availability'] += $user->availability->count();
-                    } else {
-                        $cityList[$city->name]['availability'] = $user->availability->count();
-                    }
-                }
+            foreach ($user->tagsWithType('EligibleCity') as $city) {
+                $cityName = $city->name;
+                $cityList[$cityName]['userCount'] = ($cityList[$cityName]['userCount'] ?? 0) + 1;
+                $cityList[$cityName]['availability'] = ($cityList[$cityName]['availability'] ?? 0) + $user->availability->count();
             }
-
         }
-
         return $cityList;
     }
 }

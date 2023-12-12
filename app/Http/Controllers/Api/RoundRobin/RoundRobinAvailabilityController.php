@@ -37,7 +37,7 @@ class RoundRobinAvailabilityController extends Controller
     {
 
 
-        $officeRoundRobin = RoundRobin::where('office_id', 34)
+        $officeRoundRobin = RoundRobin::where('office_id', 1)
             ->where('type', 'Call Center Offices')->first();
 //dump($officeRoundRobin->list);
         $eligibleOffices = Office::whereIn('id', $officeRoundRobin->list)
@@ -72,16 +72,6 @@ class RoundRobinAvailabilityController extends Controller
     public function index()
     {
 
-
-//return Carbon::now()->startOfDay()->timezone('america/los_angeles');
-
-//        ['appointment', function ($A){
-//            $A->where('start_time', '>', Carbon::now()->startOfDay()->timezone('america/los_angeles')->toDateTimeString());
-//        }, 'availability' => function ($B){
-//            $B->where('start', '>', Carbon::now()->startOfDay()->timezone('america/los_angeles')->toDateTimeString());
-//        } ]
-
-//        $payload = Cache::remember('Coverage', 6000, function () {
         $users = $this->cityListForUserRR();
         $allCityArray = [];
         $array = [];
@@ -95,97 +85,7 @@ class RoundRobinAvailabilityController extends Controller
         }
         $listOfAll = $allCityArray;
 
-//
-//            $cityArray = array_unique($array);
-//return $cityArray;
-//            $currentTime = new Carbon('now');
-//            $endTime = new Carbon('+ 2 week');
-//            $available = $currentTime->addHour(12);
-//            $available->minute(00)->second(0);
-//            $dayStart = Carbon::createFromTime(3, 30, '00')->toTimeString();
-//            $dayEnd = Carbon::createFromTime(22, 00, '00')->toTimeString();
-//            $period = new CarbonPeriod($available, '60 minutes', $endTime);
-//
-//            $e = -1;
-//            $i = 0;
-//            $cityArray = [];
-//
-//
-//            foreach ($office->tagsWithType('EligibleCity') as $tag) {
-//                array_push($cityArray, $tag->name);
-//            }
-//
-//            $i = 0;
-//            $slotCollection = array();
-//            $userArray = array();
-////        return $slotArray;
-//            foreach ($slotArray as $city => $slots) {
-//                $userList = array();
-//                foreach ($users as $user) {
-//
-//
-//                    if (!in_array($city, $cityArray)) {
-//                        continue;
-//                    }
-//
-//                    $availability = $user->availability;
-//                    $currentAppointments = $user->appointments;
-//
-//
-//                }
-//            }
-//
-//            $userCityListArray = array();
-//            $i = 0;
-////            return $slotCollection;
-//            foreach ($slotCollection as $topKey => $collection) {
-//                $i++;
-//                if (isset($collection['user'])) {
-//                    foreach ($collection['user'] as $key => $user) {
-//
-//                        $userCityListArray[$key]['cities'][$i] = $topKey;
-//                        $leads = Lead::query();
-//
-//                        $leads->where('created_at', '>', Carbon::now()->subMonths(2));
-//                        $userId = $user['id'];
-//                        $leads->whereHas('reps', function ($q) use ($userId) {
-//                            $q->where('user_id', $userId);
-//                            $q->where('user_has_leads.deleted_at', null);
-//                        });
-//
-//                        $leads = $leads->get();
-//                        $totalLeadCount = $leads->count();
-//                        $leadsNoneCancelled = $leads->filter(function ($value, $key) {
-//                            if ($value->status_id != 14 && $value->status_id != 20) {
-//                                return true;
-//                            }
-//                        });
-////                $canceled = $closes->filter(function ($value, $key) {
-////                    return $value->status_id == 21;
-////                });
-//                        $closed = $leads->filter(function ($value, $key) {
-//                            if ($value->close_date != null) {
-//                                return true;
-//                            }
-//                        });
-//
-//                        if ($totalLeadCount > 0) {
-//                            $validAppointments = $leadsNoneCancelled->count() - $user['appointments'];
-//                            if ($validAppointments != 0 || $closed->count() != 0)
-//                                $closedPercent = ($closed->count() / $validAppointments) * 100;
-//                            $closedPercent = round($closedPercent, 2);
-//                            $slotCollection[$topKey]['user'][$key]['closepercent'] = $closedPercent;
-//                        }
-//                        $userCityListArray[$key]['name'] = $key;
-//                        $userCityListArray[$key]['closingPercent'] = $closedPercent;
-//                        $userCityListArray[$key]['totalLeads'] = $leadsNoneCancelled->count();
-//                        $userCityListArray[$key]['closedLeads'] = $closed->count();
-//                        $userCityListArray[$key]['currentAppointments'] = $user['appointments'];
-//                        $userCityListArray[$key]['availableAppointments'] = $user['available'];
-//                    }
-//                }
-//            }
-//        $slotCollection = collect($listOfAll);
+
         $usersWithList = $users->map(function ($item, $key) {
             return [
                 'id' => $item['id'],
@@ -211,146 +111,105 @@ class RoundRobinAvailabilityController extends Controller
 
     public function byCities()
     {
-        $leads = Lead::where('source', 'call center')->whereHas('office', function ($q) {
-            $q->where('market_id', 14);
-        })->whereHas('appointments', function ($q){ $q->where('remote', false)->where('type_id', 6);})->with(['appointments' => function ($q) {
-            $q->where('type_id', 6);
-            $q->where('remote', false);
+        $leads = Lead::where('source', 'call center')
+            ->whereHas('office', fn($q) => $q->where('market_id', 1))
+            ->whereHas('appointments', fn($q) => $q->where('remote', false)->where('type_id', 6))
+            ->with(['appointments', 'system', 'customer', 'salesPacket'])
+            ->get();
+        $users = $this->cityListForUserRR();
+        $users = $users->load(['availability' => fn($q) => $q->where('type', 'in-person')
+            ->where('start', '>', Carbon::now())]);
 
-        },
-            'system', 'customer', 'salesPacket'])->get();
+//        $users = User::whereHas('office', fn($q) => $q->where('market_id', 1))
 
-        $users = User::whereHas('office', function ($q) {
-            $q->where('market_id', 14);
-        })->with(['availability' => function ($q) {
-            $q->where('type', 'call-center')->where('start', '>', Carbon::now());
-        }])->get();
+
         $cityList = [];
         foreach ($leads as $lead) {
-            if (!$lead->customer){
+            if (!$lead->customer || $lead->customer->city === '') {
                 continue;
             }
-            if ($lead->customer->city === '') {
-                continue;
-            }
-            $city = strtolower(trim( $lead->customer->city));
-            $cityList[$city]['name'] = $city;
-            if ($lead->appointments->count()) {
 
-                if (Carbon::parse($lead->appointments[0]->start_time) < Carbon::now()) {
-                    if (isset($cityList[$city]['appointments'])) {
-                        $cityList[$city]['appointments']++;
-                    } else {
-                        $cityList[$city]['appointments'] = 1;
-                    }
-                }else{
-                    if (!isset($cityList[$city]['appointments'])) {
-                        $cityList[$city]['appointments'] = 0;
-                    }
-                }
-
-                if (Carbon::parse($lead->appointments[0]->start_time) > Carbon::now()) {
-                    if (isset($cityList[$city]['futureAppointments'])) {
-                        $cityList[$city]['futureAppointments']++;
-                    } else {
-                        $cityList[$city]['futureAppointments'] = 1;
-                    }
-                }
-            }
-            if ($lead->system) {
-                if (isset($cityList[$city]['closed'])) {
-                    $cityList[$city]['closed']++;
-                } else {
-                    $cityList[$city]['closed'] = 1;
-                }
-                if (isset($cityList[$city]['kwh'])) {
-                    $cityList[$city]['kwh'] += $lead->system->system_size;
-                } else {
-                    $cityList[$city]['kwh'] = $lead->system->system_size;
-                }
-            }
-            if ($lead->salesPacket->sat) {
-                if (isset($cityList[$city]['sat'])) {
-                    $cityList[$city]['sat']++;
-                } else {
-                    $cityList[$city]['sat'] = 1;
-                }
-            }
-            if (!isset($cityList[$city]['closed'])) {
-                $cityList[$city]['closed'] = 0;
-            }
-            if (!isset($cityList[$city]['kwh'])) {
-                $cityList[$city]['kwh'] = 0;
+            $city = strtolower(trim($lead->customer->city));
+            if (!isset($cityList[$city])) {
+                $cityList[$city] = [
+                    'name' => $city,
+                    'appointments' => 0,
+                    'futureAppointments' => 0,
+                    'closed' => 0,
+                    'kwh' => 0,
+                    'sat' => 0,
+                    'userCount' => 0,
+                    'availability' => 0,
+                ];
             }
 
-            if (!isset($cityList[$city]['appointments'])) {
-                $cityList[$city]['appointments'] = 0;
-            }
-            if (!isset($cityList[$city]['futureAppointments'])) {
-                $cityList[$city]['futureAppointments'] = 0;
-            }
-            if (!isset($cityList[$city]['sat'])) {
-                $cityList[$city]['sat'] = 0;
-            }
-            if (!isset($cityList[$city]['userCount'])) {
-                $cityList[$city]['userCount'] = 0;
-            }
-            if (!isset($cityList[$city]['availability'])) {
-                $cityList[$city]['availability'] = 0;
-            }
+            $cityList[$city] = $this->updateCityListWithLead($cityList[$city], $lead);
         }
+
         foreach ($users as $user) {
-
-            $userCities = $user->tagsWithType('EligibleCity');
-            foreach ($userCities as $city) {
-                $cityDisplay = strtolower(trim( $city->name));
-                $cityList[$cityDisplay]['name'] = $cityDisplay;
-                if (isset($cityList[$cityDisplay]['userCount'])) {
-                    $cityList[$cityDisplay]['userCount']++;
-                } else {
-                    $cityList[$cityDisplay]['userCount'] = 1;
-                }
-                if ($user->availability) {
-
-                    if (isset($cityList[$cityDisplay]['availability'])) {
-                        $cityList[$cityDisplay]['availability'] += $user->availability->count();
-                    } else {
-                        $cityList[$cityDisplay]['availability'] = $user->availability->count();
-                    }
-                }
-                if (!isset($cityList[$cityDisplay]['closed'])) {
-                    $cityList[$cityDisplay]['closed'] = 0;
-                }
-                if (!isset($cityList[$cityDisplay]['kwh'])) {
-                    $cityList[$cityDisplay]['kwh'] = 0;
+            foreach ($user->tagsWithType('EligibleCity') as $city) {
+                $cityDisplay = strtolower(trim($city->name));
+                if (!isset($cityList[$cityDisplay])) {
+                    $cityList[$cityDisplay] = [
+                        'name' => $cityDisplay,
+                        'appointments' => 0,
+                        'futureAppointments' => 0,
+                        'closed' => 0,
+                        'kwh' => 0,
+                        'sat' => 0,
+                        'userCount' => 0,
+                        'availability' => 0,
+                    ];
                 }
 
-                if (!isset($cityList[$cityDisplay]['appointments'])) {
-                    $cityList[$cityDisplay]['appointments'] = 0;
-                }
-                if (!isset($cityList[$cityDisplay]['futureAppointments'])) {
-                    $cityList[$cityDisplay]['futureAppointments'] = 0;
-                }
-                if (!isset($cityList[$cityDisplay]['sat'])) {
-                    $cityList[$cityDisplay]['sat'] = 0;
-                }
-                if (!isset($cityList[$cityDisplay]['userCount'])) {
-                    $cityList[$cityDisplay]['userCount'] = 0;
-                }
-                if (!isset($cityList[$cityDisplay]['availability'])) {
-                    $cityList[$cityDisplay]['availability'] = 0;
-                }
+                $cityList[$cityDisplay] = $this->updateCityListWithUser($cityList[$cityDisplay], $user);
             }
         }
 
-        $payloads = collect($cityList);
-        $payloadArray = array();
-        foreach ($payloads as $payload) {
-            $payloadArray[] = $payload;
+        return array_values($cityList);
+    }
+
+    private function generateCityList($leads, $users)
+    {
+        $cityList = [];
+
+        foreach ($leads as $lead) {
+            if (!$lead->customer || $lead->customer->city === '') {
+                continue;
+            }
+
+            $city = strtolower(trim($lead->customer->city));
+            $cityList[$city] = $this->updateCityListWithLead($cityList[$city] ?? [], $lead);
         }
 
-        return $payloadArray;
+        foreach ($users as $user) {
+            foreach ($user->tagsWithType('EligibleCity') as $city) {
+                $cityDisplay = strtolower(trim($city->name));
+                $cityList[$cityDisplay] = $this->updateCityListWithUser($cityList[$cityDisplay] ?? [], $user);
+            }
+        }
 
+        return $cityList;
+    }
+
+    private function updateCityListWithLead($cityData, $lead)
+    {
+        $cityData['name'] = strtolower(trim($lead->customer->city));
+        $cityData['appointments'] = $lead->appointments->count() ? ($cityData['appointments'] ?? 0) + 1 : ($cityData['appointments'] ?? 0);
+        $cityData['futureAppointments'] = $lead->appointments->count() && Carbon::parse($lead->appointments[0]->start_time) > Carbon::now() ? ($cityData['futureAppointments'] ?? 0) + 1 : ($cityData['futureAppointments'] ?? 0);
+        $cityData['closed'] = $lead->system ? ($cityData['closed'] ?? 0) + 1 : ($cityData['closed'] ?? 0);
+        $cityData['kwh'] = $lead->system ? ($cityData['kwh'] ?? 0) + $lead->system->system_size : ($cityData['kwh'] ?? 0);
+        $cityData['sat'] = $lead->salesPacket->sat ? ($cityData['sat'] ?? 0) + 1 : ($cityData['sat'] ?? 0);
+
+        return $cityData;
+    }
+
+    private function updateCityListWithUser($cityData, $user)
+    {
+        $cityData['userCount'] = ($cityData['userCount'] ?? 0) + 1;
+        $cityData['availability'] = ($cityData['availability'] ?? 0) + $user->availability->count();
+
+        return $cityData;
     }
 
 }
