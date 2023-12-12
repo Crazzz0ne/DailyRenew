@@ -25,13 +25,13 @@
             :office-id="office.officeId"
             @newUser="getOfficeRR()"
           />
-          <h5>Cities</h5>
-          <city-select
-            class="mb-2"
-            :office-id="office.officeId"
-            :selected-cities="office.cities"
-            :all-cities="allCities"
-          />
+<!--          <h5>Cities</h5>-->
+<!--          <city-select-->
+<!--            class="mb-2"-->
+<!--            :office-id="office.officeId"-->
+<!--            :selected-cities="office.cities"-->
+<!--            :all-cities="allCities"-->
+<!--          />-->
 
           <div class="row">
             <div
@@ -91,7 +91,7 @@ export default {
 			return this.roundRobins.map((office) => {
 				const users = []
 
-				office.list.forEach(index => {
+				office.userList.forEach(index => {
 					// console.log(index, 'this is it')
 					users.push(this.users.find(u => u.id === index))
 				})

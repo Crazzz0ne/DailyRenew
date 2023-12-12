@@ -64,36 +64,41 @@ class RoundRobinController extends Controller
             }])->orderByRaw("FIELD(id, $ids_ordered)")
             ->get();
 
-        foreach ($offices as $office) {
-            $cityArray = [];
-            foreach ($office->tagsWithType('EligibleCity') as $city) {
-                array_push($cityArray, $city->name);
-            }
-            $office->cities = $cityArray;
-        }
-
         $officesWithList = $offices->map(function ($item, $key) {
-            return [
-                'id' => $item['RoundRobin'][0]['id'],
-                'office_id' => $item['id'],
-                'name' => $item['name'],
-                'list' => $item['RoundRobin'][0]['list'],
-                'cities' => $item['cities']
-            ];
+            if ($item['RoundRobin'][0]['type'] === 'Call Center Appointments') {
+                return [
+                    'id' => $item['RoundRobin'][0]['id'],
+                    'office_id' => $item['id'],
+                    'name' => $item['name'],
+                    'userList' => $item['RoundRobin'][0]['list'],
+                ];
+            } else if (isset($item['RoundRobin'][1]) && $item['RoundRobin'][1]['type'] === 'Call Center Appointments') {
+                return [
+                    'id' => $item['RoundRobin'][1]['id'],
+                    'office_id' => $item['id'],
+                    'name' => $item['name'],
+                    'userList' => $item['RoundRobin'][1]['list'],
+                ];
+            } else if ($item['RoundRobin'][0]['type'] === 'Call Center Offices' || (isset($item['RoundRobin'][1]) && $item['RoundRobin'][1]['type'] === 'Call Center Offices')) {
+                return [
+                    'id' => $item['RoundRobin'][1]['id'],
+                    'office_id' => $item['id'],
+                    'name' => $item['name'],
+                    'userList' => [],
+                ];
+            }
         });
         $userList = [];
         foreach ($officesWithList as $list) {
-            foreach ($list['list'] as $l)
+            foreach ($list['userList'] as $l)
                 array_push($userList, $l);
         }
         $list = array_unique($userList);
-
-        $users = User::whereIn('id', $list)->get();
+        $usersList = User::whereIn('id', $list)->get();
         return $payload = [
-            'users' => UserResource::collection($users),
+            'users' => UserResource::collection($usersList),
             'roundRobins' => $officesWithList
         ];
-
     }
 
     public function update(RoundRobin $roundRobin, Request $request)
