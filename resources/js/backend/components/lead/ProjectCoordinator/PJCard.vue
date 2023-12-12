@@ -141,7 +141,7 @@
         </div>
       </div>
       <div
-        v-show="$can('create change order')"
+        v-show="$can('create change order') && lead.closedAt"
         class="col-12 text-center pb-3"
       >
         <div class="row">

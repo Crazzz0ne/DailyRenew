@@ -528,86 +528,6 @@ class LeadController extends Controller
         $something = $lead->getChanges();
         if (count($something) > 0) {
 ///Integrations
-            if ($request->usageReview) {
-                $body = null;
-                $sp1 = UserHasLead::where('lead_id', '=', $lead->id)
-                    ->where('position_id', '=', 2)
-                    ->with('user')
-                    ->get()
-                    ->count();
-//                        Finds out if we need to assign a Sp1
-                if ($lead->source === 'canvasser') {
-
-                    if ($lead->integrations_approved === 3) {
-                        $sp1Queue = Line::where('lead_id', '=', $lead->id)
-                            ->where('type', '=', 'sp1')
-                            ->where('lead_id', '=', $lead->id)
-                            ->get()
-                            ->count();
-                        if ($sp1Queue === 0 && $sp1 === 0) {
-
-                            $canvasser = UserHasLead::where('lead_id', '=', $lead->id)
-                                ->where('position_id', '=', 1)
-                                ->with('user')
-                                ->first();
-
-                            $queue = new Line();
-                            $queue->requested_user_id = $canvasser->user->id;
-                            $queue->lead_id = $lead->id;
-                            $queue->type = 'sp1';
-                            $queue->save();
-                            $payload = new LineResource($queue);
-                            event(new NewUserNotificationEvent($payload));
-                            event(new QueuePageEvent($payload, 'assigned', null));
-                            event(new ElevatorEvent($queue->type, 1));
-
-//                            $sp1Message = 'Qualified lead  from ' . $canvasser->user->full_name . '. ' . URL::to('/') . '/dashboard/lead/queue/' . $queue->id . '';
-//                            $this->leadRepository->requestTextSp1($canvasser->user->office_id, $sp1Message);
-                        }
-                    }
-                }
-
-//                Creates the body for to let the sales reps know about the lead status incase they are not on the page
-                if ($lead->integrations_approved === 3) {
-                    $body = 'Your customer ' . $lead->customer->first_name . ' has passed integrations!';
-
-                    if (($lead->status_id === 1 || $lead->status_id === 17 || $lead->status_id === 4 || $lead->status_id === 18) &&
-                        ($lead->credit_status_id === 4 || $lead->credit_status_id === 1)) {
-                        $lead->status_id = 2;
-                    } else if (($lead->status_id == 18) && ($lead->credit_status_id === 9 || $lead->credit_status_id === 2)) {
-                        $lead->status_id = 3;
-                    }
-
-                } elseif ($lead->integrations_approved === 2) {
-                    $body = 'Your customer ' . $lead->customer->first_name . ' has failed integrations :(';
-                    $lead->status_id = 18;
-                } elseif ($lead->integrations_approved === 4) {
-                    $lead->status_id = 4;
-                    $body = 'Your customer ' . $lead->customer->first_name . ' usage is unavailable  :(';
-                }
-
-                $lead->save();
-
-                $reps = UserHasLead::where('lead_id', '=', $lead->id)
-                    ->where('position_id', '!=', 4)
-                    ->where('position_id', '!=', 6)
-                    ->with('user')
-                    ->get();
-
-                $lastId = 0;
-                if ($body) {
-                    foreach ($reps as $rep) {
-                        if ($lastId !== $rep->user->id) {
-                            event(new TextEvent($rep->user->phone_number, $body));
-                            $lastId = $rep->user->id;
-                        }
-                    }
-                }
-
-                $temp2 = $lead->getChanges();
-
-                $something = array_merge($something, $temp2);
-            }
 
             if ($request->creditReview) {
 //                check to see if lead->office->market  === 1
@@ -630,27 +550,6 @@ class LeadController extends Controller
                 }
                 event(new UpdateZapierEvent($lead, 'credit'));
 
-//                $creditPass = [2, 3, 5, 6];
-//                $appointments = $lead->appointments->where('type_id', 6);
-//                $appointments->all();
-//                if ($appointments->count() > 0) {
-//                    if ($lead->office->options->commission_plan === 'opener') {
-//                        if ($lead->source === 'canvasser' && in_array($lead->credit_status_id, $creditPass)) {
-//
-//                            $this->leadRepository->canvasserCalc($lead);
-//                        } else {
-//
-//                            $this->leadRepository->removeCommission($lead);
-//                        }
-//                    }
-//                    if ($lead->source === 'call center' && in_array($lead->credit_status_id, $creditPass)) {
-//
-//                        $this->leadRepository->callCenterCommission($lead, $user, 1, 2);
-//                        $this->leadRepository->callCenterCommission($lead, $user, 1, 1);
-//                    }
-//                    $temp2 = $lead->getChanges();
-//                    $something = array_merge($something, $temp2);
-//                }
             }
 
 //        I need the ID for vue to match on the page

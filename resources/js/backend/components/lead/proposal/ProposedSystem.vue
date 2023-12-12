@@ -479,16 +479,7 @@
         >
           Close
         </MazBtn>
-          <MazBtn
-              v-if="selectedSystem.epc === 'complete' && lead.origin_office_id === 5 && user.office_id === 5"
-              :color="'success'"
-              :left-icon-name="'park'"
-              :loading="btnLoading"
-              :disabled="!checkListFilled"
-              @click="confirmRequestss()"
-          >
-              Close Solving Solar
-          </MazBtn>
+
       </div>
       <div
         v-else-if="!user.office.canSunRun && selectedSystem.pb_design_approved "
@@ -506,7 +497,7 @@
                 @queue="getProposedSystems"
               />
             </div>
-            <div class="col">
+            <div class="col" v-if="lead.status !== 'Change Order'">
               <template v-if="!checkListFilled">
                 <p style="color: red">
                   Check list must be filled in before we can Close
@@ -521,16 +512,7 @@
               >
                 Close
               </MazBtn>
-                <MazBtn
-                    v-if="selectedSystem.epc === 'complete' && lead.origin_office_id === 5"
-                    :color="'success'"
-                    :left-icon-name="'park'"
-                    :loading="btnLoading"
-                    :disabled="!checkListFilled"
-                    @click="confirmRequestss()"
-                >
-                    Close Solving Solar
-                </MazBtn>
+
             </div>
           </div>
         </div>

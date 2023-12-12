@@ -60,12 +60,10 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        TextEvent::class => [
-            SendTextListener::class,
-        ],
-        MailChimpDripAddEvent::class => [
-            MailChimpDripAddListener::class,
-        ],
+//        TextEvent::class => [
+//            SendTextListener::class,
+//        ],
+
         Invited::class => [
             SendUserInvitationNotification::class,
         ],
@@ -83,18 +81,18 @@ class EventServiceProvider extends ServiceProvider
             UnStaleNoteListener::class,
             SendToLeadChatListener::class
         ],
-        CompleteClosedEvent::class => [
-            CreateCompleteLeadListener::class,
-        ],
-        SendFileToEPCEvent::class => [
-            SendFileToEPCListener::class
-        ],
+//        CompleteClosedEvent::class => [
+//            CreateCompleteLeadListener::class,
+//        ],
+//        SendFileToEPCEvent::class => [
+//            SendFileToEPCListener::class
+//        ],
         JeopardyEvent::class => [
             SendGHLWebhookListener::class,
         ],
-        CreateSalesRabbitLeadEvent::class => [
-            CreateSalesRabbitLeadListener::class
-        ],
+//        CreateSalesRabbitLeadEvent::class => [
+//            CreateSalesRabbitLeadListener::class
+//        ],
         CustomerAppointmentEvent::class => [
             CustomerAppointmentListener::class
         ],

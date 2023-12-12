@@ -179,15 +179,6 @@ class SalesPacketController
         $user = Auth::user();
 
 
-        $salesPacket = SalesPacket::where('id', $lead->sales_packet_id)->first();
-
-        $isSp2 = UserHasLead::where('user_id', $user->id)->where('lead_id', $lead->id)->where('position_id', 3)->count();
-        if ($isSp2) {
-            $approved = null;
-        } else {
-            $approved = Carbon::now()->toDateTimeString();
-        }
-
         $lead->status_id = 9;
         $lead->save();
 
@@ -202,33 +193,14 @@ class SalesPacketController
         $requestedSystem->lead_id = $lead->id;
         $requestedSystem->inverter_id = $lead->system->inverter_id ?? 0;
         $requestedSystem->modules_id = $lead->system->modules_id ?? 0;
-        $requestedSystem->epc_finance_id = $lead->system->epc_finance_id ?? null;
-        $requestedSystem->approved = $approved;
+        $requestedSystem->epc_finance_id = $lead->system->epc_finance_id ;
         $requestedSystem->save();
+
+//        delete line of lead
+        Line::where('lead_id', $lead->id)->where('type', 'sun_run_runner')->delete();
 
         event(new RequestedSystemEvent($requestedSystem, $lead->id, false));
 
-        if (!$isSp2) {
-            $porposedSystem = new ProposedSystem();
-            $porposedSystem->lead_id = $lead->id;
-            $porposedSystem->inverter_id = $lead->system->inverter_id ?? 0;
-            $porposedSystem->modules_id = $lead->system->modules_id ?? 0;
-            $porposedSystem->epc_finance_id = $lead->system->epc_finance_id ?? null;
-            $porposedSystem->save();
-            event(new ProposedSystemEvent($porposedSystem, $lead->id, false));
-        }
-
-        $line = new Line();
-        $line->requested_user_id = $user->id;
-        $line->lead_id = $lead->id;
-        $line->type = 'change_order';
-        $line->save();
-
-        $something = Line::where('id', $line->id)->with('requestingUser', 'filledUser')->first();
-        $somethingElse = new LineResource($something);
-
-        event(new NewUserNotificationEvent($somethingElse));
-        event(new QueuePageEvent($somethingElse, 'assigned', null));
         event(new LeadUpdateEvent($data, $lead->id));
 
         $notes = 'Created a Change order.';
@@ -241,17 +213,6 @@ class SalesPacketController
         broadcast(new LeadNewMessageEvent($lead->id, $note->id, $note->note, 1, false));
         event(new NewNoteEvent($lead->id, $note->id, $note->note, 1, false));
 
-        $options = [
-            'color' => 'good',
-            'fields' => [
-                [
-                    'title' => 'Change Order',
-                    'value' => "{$line->requestingUser->name} has just requested a change order for {$line->lead->customer->name}!",
-                    'short' => false,
-                ]
-            ],
-        ];
 
-        Slack::compose(Slack::link(config('app.url') . '/dashboard/lead/queue', 'View Queue'), config('slack.channels.core'), $options);
     }
 }
